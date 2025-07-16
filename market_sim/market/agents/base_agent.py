@@ -142,3 +142,6 @@ class BaseAgent(ABC):
                 del self.orders[order_id]
                 cancelled_orders.append(order_id)
         return cancelled_orders 
+
+# Alias for backward compatibility
+Agent = BaseAgent

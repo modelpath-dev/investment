@@ -8,8 +8,19 @@ from decimal import Decimal
 from enum import Enum
 from typing import Optional, List, Dict, Union
 from uuid import UUID, uuid4
-from core.utils.time_utils import utc_now
-from core.utils.time_utils import utc_now
+from market_sim.core.utils.time_utils import utc_now
+
+@dataclass
+class BaseEntity:
+    """Base class for all market simulation entities"""
+    id: UUID = None
+    created_at: datetime = None
+    
+    def __post_init__(self):
+        if self.id is None:
+            self.id = uuid4()
+        if self.created_at is None:
+            self.created_at = utc_now()
 
 class OrderType(Enum):
     MARKET = "market"
@@ -31,25 +42,30 @@ class OrderStatus(Enum):
 @dataclass
 class Order:
     """Base class for market orders."""
-    id: UUID
-    symbol: str
-    side: OrderSide
-    type: OrderType
-    quantity: Decimal
-    price: Optional[Decimal]
-    stop_price: Optional[Decimal]
-    status: OrderStatus
-    filled_quantity: Decimal
-    remaining_quantity: Decimal
-    created_at: datetime
-    updated_at: datetime
-    agent_id: str
+    id: UUID = None
+    created_at: datetime = None
+    symbol: str = None
+    side: OrderSide = None
+    type: OrderType = None
+    quantity: Decimal = None
+    price: Optional[Decimal] = None
+    stop_price: Optional[Decimal] = None
+    status: OrderStatus = None
+    filled_quantity: Decimal = None
+    remaining_quantity: Decimal = None
+    updated_at: datetime = None
+    agent_id: str = None
+    
+    def __post_init__(self):
+        if self.id is None:
+            self.id = uuid4()
+        if self.created_at is None:
+            self.created_at = utc_now()
     
     @classmethod
     def create_market_order(cls, symbol: str, side: OrderSide, quantity: Decimal, agent_id: str) -> 'Order':
         now = utc_now()
         return cls(
-            id=uuid4(),
             symbol=symbol,
             side=side,
             type=OrderType.MARKET,
@@ -69,7 +85,6 @@ class Order:
                           price: Decimal, agent_id: str) -> 'Order':
         now = utc_now()
         return cls(
-            id=uuid4(),
             symbol=symbol,
             side=side,
             type=OrderType.LIMIT,
@@ -87,19 +102,25 @@ class Order:
 @dataclass
 class Trade:
     """Represents a completed trade between two orders."""
-    id: UUID
-    symbol: str
-    price: Decimal
-    quantity: Decimal
-    buyer_order_id: UUID
-    seller_order_id: UUID
-    timestamp: datetime
+    id: UUID = None
+    created_at: datetime = None
+    symbol: str = None
+    price: Decimal = None
+    quantity: Decimal = None
+    buyer_order_id: UUID = None
+    seller_order_id: UUID = None
+    timestamp: datetime = None
+    
+    def __post_init__(self):
+        if self.id is None:
+            self.id = uuid4()
+        if self.created_at is None:
+            self.created_at = utc_now()
     
     @classmethod
     def create(cls, symbol: str, price: Decimal, quantity: Decimal, 
                buyer_order_id: UUID, seller_order_id: UUID) -> 'Trade':
         return cls(
-            id=uuid4(),
             symbol=symbol,
             price=price,
             quantity=quantity,
@@ -111,10 +132,22 @@ class Trade:
 @dataclass
 class OrderBook:
     """Represents the order book for a single symbol."""
-    symbol: str
-    bids: Dict[Decimal, List[Order]]  # Price -> Orders
-    asks: Dict[Decimal, List[Order]]  # Price -> Orders
-    last_updated: datetime
+    id: UUID = None
+    created_at: datetime = None
+    symbol: str = None
+    bids: Dict[Decimal, List[Order]] = None  # Price -> Orders
+    asks: Dict[Decimal, List[Order]] = None  # Price -> Orders
+    last_updated: datetime = None
+    
+    def __post_init__(self):
+        if self.id is None:
+            self.id = uuid4()
+        if self.created_at is None:
+            self.created_at = utc_now()
+        if self.bids is None:
+            self.bids = {}
+        if self.asks is None:
+            self.asks = {}
     
     @classmethod
     def create(cls, symbol: str) -> 'OrderBook':
@@ -150,24 +183,40 @@ class OrderBook:
 @dataclass
 class Asset:
     """Base class for tradable assets."""
-    symbol: str
-    name: str
-    asset_type: str
-    decimals: int
-    min_trade_size: Decimal
-    max_trade_size: Optional[Decimal]
-    tick_size: Decimal
+    id: UUID = None
+    created_at: datetime = None
+    symbol: str = None
+    name: str = None
+    asset_type: str = None
+    decimals: int = None
+    min_trade_size: Decimal = None
+    max_trade_size: Optional[Decimal] = None
+    tick_size: Decimal = None
+    
+    def __post_init__(self):
+        if self.id is None:
+            self.id = uuid4()
+        if self.created_at is None:
+            self.created_at = utc_now()
 
 @dataclass
 class Position:
     """Represents a trading position."""
-    agent_id: str
-    symbol: str
-    quantity: Decimal
-    average_entry_price: Decimal
-    unrealized_pnl: Decimal
-    realized_pnl: Decimal
-    last_updated: datetime
+    id: UUID = None
+    created_at: datetime = None
+    agent_id: str = None
+    symbol: str = None
+    quantity: Decimal = None
+    average_entry_price: Decimal = None
+    unrealized_pnl: Decimal = None
+    realized_pnl: Decimal = None
+    last_updated: datetime = None
+    
+    def __post_init__(self):
+        if self.id is None:
+            self.id = uuid4()
+        if self.created_at is None:
+            self.created_at = utc_now()
     
     @classmethod
     def create(cls, agent_id: str, symbol: str) -> 'Position':
@@ -195,4 +244,4 @@ class Position:
             self.realized_pnl += realized_pnl
             self.quantity -= trade_quantity
             
-        self.last_updated = utc_now() 
+        self.last_updated = utc_now()

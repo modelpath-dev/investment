@@ -76,4 +76,19 @@ class LongStreak(Base):
     __table_args__ = (
         UniqueConstraint('ticker', 'start_date', 'streak_type'),
         Index('idx_long_streaks_ticker', 'ticker')
-    ) 
+    )
+
+# Alias for backward compatibility
+StockData = RawStockData
+
+# Additional helper classes for testing and analysis
+class StockPrice:
+    """Simple data class for stock price information"""
+    def __init__(self, ticker, date, open_price, high_price, low_price, close_price, volume):
+        self.ticker = ticker
+        self.date = date
+        self.open_price = open_price
+        self.high_price = high_price
+        self.low_price = low_price
+        self.close_price = close_price
+        self.volume = volume
