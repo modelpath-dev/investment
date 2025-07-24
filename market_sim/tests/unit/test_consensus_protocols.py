@@ -15,7 +15,7 @@ import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../blockchain/consensus'))
 
-from byzantine_broadcast import ByzantineBroadcastNode, BroadcastMessage, ByzantineProtocol
+from byzantine_broadcast import ByzantineBroadcastNode, BroadcastMessage, ByzantineBroadcastProtocol as ByzantineProtocol
 from streamlet import StreamletNode, Block, Vote, Blockchain
 from randomized_consensus import RandomizedConsensusNode, ConsensusMessage, CommonCoinOracle
 from nakamoto import NakamotoBlockchain, PoWBlock, PoWMiner

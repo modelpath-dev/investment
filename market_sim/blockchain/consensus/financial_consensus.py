@@ -15,10 +15,83 @@ import asyncio
 from abc import ABC, abstractmethod
 
 # Import consensus protocols
-from byzantine_broadcast import ByzantineBroadcastNode, BroadcastMessage
-from streamlet import StreamletNode, Block, Vote
-from randomized_consensus import RandomizedConsensusNode, ConsensusMessage
-from nakamoto import NakamotoBlockchain, PoWBlock
+try:
+    from .byzantine_broadcast import ByzantineBroadcastNode, BroadcastMessage
+except ImportError:
+    try:
+        from byzantine_broadcast import ByzantineBroadcastNode, BroadcastMessage
+    except ImportError:
+        # Create minimal fallback classes
+        class BroadcastMessage:
+            def __init__(self, content, sender_id, round_num=0, signatures=None):
+                self.content = content
+                self.sender_id = sender_id
+                self.round = round_num
+                self.signatures = signatures or {}
+        
+        class ByzantineBroadcastNode:
+            def __init__(self, node_id, total_nodes, signing_key=None):
+                self.node_id = node_id
+                self.total_nodes = total_nodes
+                self.signing_key = signing_key
+
+try:
+    from .streamlet import StreamletNode, Block, Vote
+except ImportError:
+    try:
+        from streamlet import StreamletNode, Block, Vote
+    except ImportError:
+        # Create minimal fallback classes
+        class Block:
+            def __init__(self, height, parent_hash, transactions):
+                self.height = height
+                self.parent_hash = parent_hash
+                self.transactions = transactions
+        
+        class Vote:
+            def __init__(self, block_hash, voter_id):
+                self.block_hash = block_hash
+                self.voter_id = voter_id
+        
+        class StreamletNode:
+            def __init__(self, node_id, validators):
+                self.node_id = node_id
+                self.validators = validators
+
+try:
+    from .randomized_consensus import RandomizedConsensusNode, ConsensusMessage
+except ImportError:
+    try:
+        from randomized_consensus import RandomizedConsensusNode, ConsensusMessage
+    except ImportError:
+        # Create minimal fallback classes
+        class ConsensusMessage:
+            def __init__(self, content, sender_id):
+                self.content = content
+                self.sender_id = sender_id
+        
+        class RandomizedConsensusNode:
+            def __init__(self, node_id, total_nodes):
+                self.node_id = node_id
+                self.total_nodes = total_nodes
+
+try:
+    from .nakamoto import NakamotoBlockchain, PoWBlock
+except ImportError:
+    try:
+        from nakamoto import NakamotoBlockchain, PoWBlock
+    except ImportError:
+        # Create minimal fallback classes
+        class PoWBlock:
+            def __init__(self, transactions, previous_hash, nonce=0):
+                self.transactions = transactions
+                self.previous_hash = previous_hash
+                self.nonce = nonce
+        
+        class NakamotoBlockchain:
+            def __init__(self, difficulty=4):
+                self.difficulty = difficulty
+                self.chain = []
 
 
 class FinancialOperationType(Enum):

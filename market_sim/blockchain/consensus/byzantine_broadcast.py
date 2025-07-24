@@ -10,7 +10,11 @@ from dataclasses import dataclass, field
 from enum import Enum
 import json
 import time
-from .crypto import SigningKey, DigitalSignature, CollisionResistantHash
+try:
+    from .crypto import SigningKey, DigitalSignature, CollisionResistantHash
+except ImportError:
+    # Fallback for when module is imported directly
+    from crypto import SigningKey, DigitalSignature, CollisionResistantHash
 
 
 class BBMessageType(Enum):
@@ -59,6 +63,10 @@ class BBMessage:
         # Extract node IDs from the public keys in signatures
         # For simplified implementation, we use the public_key field
         return {sig.public_key for sig in self.signatures}
+
+
+# Alias for backward compatibility
+BroadcastMessage = BBMessage
 
 
 class ByzantineBroadcastNode:

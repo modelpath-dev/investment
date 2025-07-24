@@ -172,3 +172,4 @@ class MatchingEngine:
                       for price, orders in self.order_book.asks.items()))[:depth]
         
         return bids, asks 
+    
